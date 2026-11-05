@@ -1,0 +1,1303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Solid Lab · Angle Between Two Planes</title>
+<meta name="description" content="HKDSE Form 5 3D trigonometry: draw the two perpendiculars that mark the angle between two planes." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' fill='%23004898'/><path d='M13 49h38M13 49 40 14' stroke='%23fff' stroke-width='4.5' stroke-linecap='round' fill='none'/><path d='M32 49a20 20 0 0 0-9-17' stroke='%23fff' stroke-width='3' stroke-linecap='round' fill='none' opacity='.75'/></svg>" />
+<style>
+/* ============================================================
+   Solid Lab · tokens
+   A site of its own, for Form 5. It borrows the school's colours —
+   field blue and charge red from the Wah Yan College visual
+   identity guide — and three faces (EB Garamond for the voice,
+   Archivo Narrow for the annotation, STIX Two Text for the maths),
+   but sets its own page: square corners, hairlines, no shadow, and
+   no route into the Form 1 lab.
+   ============================================================ */
+:root{
+  --color-paper:oklch(97.4% 0.006 250);
+  --color-paper-2:oklch(94.2% 0.012 250);
+  --color-paper-3:oklch(90.5% 0.016 250);
+  --color-card:oklch(99.3% 0.003 250);
+  --color-ink:oklch(22% 0.024 258);
+  --color-ink-2:oklch(33% 0.020 258);
+  --color-ink-3:oklch(46% 0.018 258);
+  --color-rule:oklch(88% 0.010 252);
+  --color-rule-2:oklch(80% 0.014 252);
+  --color-field:oklch(41.4% 0.145 256.7);
+  --color-field-2:oklch(33% 0.115 256.7);
+  --color-on-field:oklch(99% 0.004 250);
+  --color-on-field-2:oklch(86% 0.038 252);
+  --color-accent:oklch(55.3% 0.226 28);
+  --color-accent-2:oklch(42% 0.175 28);
+  --color-accent-ink:oklch(99% 0.004 250);
+  --color-focus:oklch(52% 0.21 28);
+  --tint-pos:oklch(92% 0.032 256);
+  --tint-pos-ink:oklch(32% 0.115 256);
+  --tint-neg:oklch(93% 0.038 28);
+  --tint-neg-ink:oklch(40% 0.16 28);
+
+  /* names this page already uses: plane one is the field, plane two the charge */
+  --paper:var(--color-paper);
+  --card:var(--color-card);
+  --ink:var(--color-ink);
+  --ink-2:var(--color-ink-2);
+  --ink-3:var(--color-ink-3);
+  --line:var(--color-rule);
+  --line-2:var(--color-rule-2);
+  --const:var(--color-field);
+  --const-soft:var(--tint-pos);
+  --const-line:oklch(80% 0.055 256.7);
+  --x:var(--color-accent);
+  --x-soft:var(--tint-neg);
+  --x-line:oklch(82% 0.075 28);
+  --mark:var(--color-ink);
+
+  --font-ui:"Archivo Narrow","Arial Narrow",ui-sans-serif,sans-serif;
+  --font-math:"EB Garamond",Georgia,"Times New Roman",serif;
+  --font-expr:"STIX Two Text","Times New Roman",serif;
+  --font-zh:"PingFang HK","PingFang TC","Hiragino Sans CNS","Microsoft JhengHei","Noto Sans CJK TC","Noto Sans TC",sans-serif;
+}
+@font-face{font-family:"EB Garamond";src:url("assets/fonts/eb-garamond.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"EB Garamond";src:url("assets/fonts/eb-garamond-italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"STIX Two Text";src:url("assets/fonts/stix-two-text.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"STIX Two Text";src:url("assets/fonts/stix-two-text-italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"Archivo Narrow";src:url("assets/fonts/archivo-narrow.woff2") format("woff2");font-weight:400 700;font-style:normal;font-display:swap}
+@font-face{font-family:"Archivo Narrow";src:url("assets/fonts/archivo-narrow-italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
+
+.zh{
+  font-family:var(--font-zh);
+  font-size:.92em;color:var(--ink-3);font-weight:400;letter-spacing:0;font-style:normal;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;padding:0}
+html{overflow-x:clip}
+body{
+  color:var(--ink);
+  font-family:var(--font-ui);
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  background-color:var(--paper);
+  overflow-x:clip;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+button{font-family:inherit}
+a{color:inherit}
+::selection{background:var(--tint-pos);color:var(--color-ink)}
+:focus-visible{outline:2px solid var(--color-focus);outline-offset:3px}
+
+/* ============================================================
+   1. shell
+   ============================================================ */
+.topbar{
+  position:sticky;top:0;z-index:60;
+  display:flex;align-items:center;gap:24px;
+  padding:12px clamp(16px,3.6vw,40px);
+  background:var(--color-paper);
+  border-bottom:1px solid var(--color-rule);
+}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);flex-shrink:0}
+.mark{
+  width:44px;height:44px;border-radius:0;background:var(--color-field);color:var(--color-on-field);
+  display:grid;place-items:center;font-family:var(--font-math);font-size:26px;line-height:1;
+}
+.mark svg{display:block}
+.brand-name{font-family:var(--font-math);font-weight:400;font-size:22px;letter-spacing:0;line-height:1.1;display:block}
+.brand-sub{font-size:13px;color:var(--color-ink-3);line-height:1.2;display:block}
+.top-mid{margin-left:auto;display:flex;align-items:center;gap:20px;flex-shrink:0}
+.qcount{font-family:var(--font-math);font-size:16px;color:var(--color-ink-3);letter-spacing:.02em}
+
+.lab{
+  flex:1;width:100%;max-width:1120px;margin:0 auto;padding:28px clamp(16px,3.6vw,40px) 44px;
+  display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start;
+}
+
+/* ============================================================
+   2. stage
+   ============================================================ */
+.stage-card{
+  background:var(--card);border:1px solid var(--line);border-radius:0;overflow:hidden;
+}
+.stage-head{
+  display:flex;align-items:center;gap:14px;
+  padding:12px 18px;border-bottom:1px solid var(--line);
+}
+.tag{
+  display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:400;letter-spacing:0;
+  color:var(--ink-2);border-bottom:1px solid var(--color-rule-2);padding:2px 0;
+}
+.stage-tools{margin-left:auto;display:flex;gap:8px}
+.tool{
+  border:1px solid var(--line-2);background:var(--card);color:var(--ink-2);
+  font-size:14px;font-weight:400;padding:6px 13px;border-radius:0;cursor:pointer;
+  transition:color .16s ease,border-color .16s ease,background-color .16s ease;
+}
+.tool:hover{color:var(--ink);border-color:var(--ink);background:var(--card)}
+.tool.next{background:var(--color-field);color:var(--color-on-field);border-color:var(--color-field)}
+.tool.next:hover{background:var(--color-field-2);border-color:var(--color-field-2);color:var(--color-on-field)}
+.stage{position:relative;background:var(--card)}
+.stage svg{display:block;width:100%;height:auto;touch-action:none;cursor:crosshair;user-select:none;-webkit-user-select:none}
+.legend{
+  display:flex;flex-wrap:wrap;gap:8px 20px;padding:12px 18px;
+  border-top:1px solid var(--line);font-size:13px;color:var(--ink-2);
+}
+.lg{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.sw{width:10px;height:10px;border-radius:0;display:inline-block;flex-shrink:0}
+
+/* ============================================================
+   3. panel
+   ============================================================ */
+.panel{
+  background:var(--card);border:1px solid var(--line);border-top:2px solid var(--color-field);
+  padding:20px 20px 18px;position:sticky;top:82px;
+}
+.eyebrow{font-size:13px;letter-spacing:0;color:var(--color-ink-3);font-weight:400}
+.prompt{margin:8px 0 0;font-family:var(--font-math);font-size:26px;line-height:1.24;letter-spacing:-.005em;font-weight:400}
+.pc{
+  display:inline;padding:1px 5px;
+  font-family:var(--font-math);font-size:.94em;white-space:nowrap;
+}
+.pc.const{background:var(--const-soft);color:var(--tint-pos-ink);border:1px solid var(--const-line)}
+.pc.x{background:var(--x-soft);color:var(--tint-neg-ink);border:1px solid var(--x-line)}
+.given{
+  display:inline-block;margin-top:12px;padding:3px 0;
+  font-family:var(--font-expr);font-size:14px;color:var(--ink-2);
+  border-bottom:1px solid var(--color-rule-2);
+}
+.define{
+  margin:16px 0 0;padding:12px 14px;border-left:3px solid var(--color-field);
+  background:var(--color-paper-2);
+  font-size:15px;line-height:1.62;color:var(--ink-2);
+}
+.define b{color:var(--ink);font-weight:400}
+.steps{list-style:none;margin:18px 0 0;padding:0}
+.steps li{
+  display:flex;gap:10px;align-items:flex-start;
+  padding:8px 0;font-size:15px;line-height:1.5;color:var(--ink-3);
+  transition:color .2s ease;
+}
+.steps .n{
+  width:21px;height:21px;border:1px solid var(--line-2);
+  display:grid;place-items:center;font-size:12px;font-family:var(--font-math);
+  flex-shrink:0;background:none;color:var(--ink-3);transition:.2s ease;margin-top:1px;
+}
+.steps li.on{color:var(--ink)}
+.steps li.on .n{background:var(--color-field);border-color:var(--color-field);color:var(--color-on-field)}
+.steps li.done{color:var(--ink-2)}
+.steps li.done .n{background:none;border-color:var(--color-field);color:var(--color-field)}
+.fb{
+  margin-top:14px;padding:11px 13px;min-height:44px;
+  font-size:15px;line-height:1.55;color:var(--ink-2);
+  background:var(--color-paper-2);border:1px solid var(--line);border-left:3px solid var(--color-rule-2);
+}
+.fb.ok{background:var(--color-paper-2);border-left-color:var(--color-field);color:var(--ink-2)}
+.fb.no{background:var(--color-paper-3);border-left-color:var(--color-ink-2);color:var(--ink-2)}
+.fb b{color:var(--ink);font-weight:400}
+.result{
+  margin-top:14px;padding:15px 16px;
+  background:var(--color-paper-2);border:1px solid var(--line);border-left:3px solid var(--color-ink);
+  animation:fadeUp .32s cubic-bezier(.2,.7,.3,1);
+}
+.result .big{font-family:var(--font-math);font-size:40px;line-height:1.02;color:var(--ink);letter-spacing:-.01em}
+.result .sub{font-size:13px;color:var(--ink-2);margin-top:4px;line-height:1.45}
+.result .work{
+  margin-top:10px;padding-top:10px;border-top:1px solid var(--color-rule-2);
+  font-family:var(--font-expr);font-size:14px;color:var(--ink-2);line-height:1.55;
+}
+.linkbtn{
+  margin-top:12px;border:0;background:none;padding:0;
+  font-size:14px;color:var(--color-field);cursor:pointer;
+  border-bottom:1px solid var(--color-field);padding-bottom:1px;
+}
+.linkbtn:hover{color:var(--color-field-2);border-bottom-color:var(--color-field-2)}
+.panel-actions{display:flex;gap:8px;margin-top:16px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 16px;min-height:44px;font-size:15px;font-weight:400;
+  border:1px solid transparent;cursor:pointer;border-radius:0;
+  transition:background-color .18s ease,color .18s ease,border-color .18s ease;
+}
+.btn-primary{background:var(--color-field);color:var(--color-on-field);flex:1}
+.btn-primary:hover{background:var(--color-field-2)}
+.btn-ghost{background:var(--card);border-color:var(--line-2);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--ink)}
+
+footer{
+  max-width:1120px;margin:0 auto;padding:16px clamp(16px,3.6vw,40px) 40px;
+  color:var(--color-ink-3);font-size:13px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  border-top:1px solid var(--color-rule);
+  width:100%;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ============================================================
+   4. svg
+   ============================================================ */
+.edge{stroke:var(--ink);stroke-width:1.5;stroke-linecap:round;fill:none;vector-effect:non-scaling-stroke}
+.edge.hid{stroke:var(--color-ink-3);stroke-width:1;stroke-dasharray:5 5;opacity:.75}
+.inter-halo{stroke:var(--card);stroke-width:8;stroke-linecap:round;fill:none;vector-effect:non-scaling-stroke}
+.inter{stroke:var(--mark);stroke-width:2.6;stroke-linecap:round;fill:none;vector-effect:non-scaling-stroke}
+.user-halo{stroke:var(--card);stroke-width:7;stroke-linecap:round;fill:none;vector-effect:non-scaling-stroke}
+.user{stroke-width:2.2;stroke-linecap:round;fill:none;vector-effect:non-scaling-stroke}
+.preview{stroke-width:2;stroke-dasharray:7 6;stroke-linecap:round;fill:none;opacity:.85;vector-effect:non-scaling-stroke}
+.arc{fill:none;stroke:var(--mark);stroke-width:2;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.ra{fill:none;stroke:var(--ink);stroke-width:1.1;opacity:.42;vector-effect:non-scaling-stroke}
+.vdot{fill:var(--card);stroke:var(--ink);stroke-width:1.2;vector-effect:non-scaling-stroke}
+.vlabel{
+  font-family:var(--font-math);font-size:calc(var(--fs,15px) * 1.08);font-weight:400;fill:var(--ink);
+  paint-order:stroke;stroke:var(--card);stroke-width:4px;stroke-linejoin:round;
+}
+.plabel{
+  font-family:var(--font-math);font-size:calc(var(--fs,15px) * .84);font-weight:400;fill:var(--ink-2);
+  paint-order:stroke;stroke:var(--card);stroke-width:3.5px;stroke-linejoin:round;
+}
+.plabel-p{
+  font-family:var(--font-math);font-size:calc(var(--fs,15px) * .9);font-weight:400;fill:var(--ink);
+  paint-order:stroke;stroke:var(--card);stroke-width:4px;stroke-linejoin:round;
+}
+.pdot{fill:var(--ink);stroke:var(--card);stroke-width:2.5;vector-effect:non-scaling-stroke}
+.snap{
+  font-family:var(--font-ui);font-size:calc(var(--fs,15px) * .84);font-weight:400;fill:var(--ink-2);
+  paint-order:stroke;stroke:var(--card);stroke-width:3.5px;stroke-linejoin:round;
+}
+.angtext{
+  font-family:var(--font-math);font-size:calc(var(--fs,15px) * 1.02);font-weight:400;fill:var(--ink);
+  paint-order:stroke;stroke:var(--card);stroke-width:4.5px;stroke-linejoin:round;
+}
+.hover{fill:none;stroke:var(--ink);stroke-width:1.4;stroke-dasharray:3 3;vector-effect:non-scaling-stroke;opacity:.6}
+
+/* ============================================================
+   5. responsive
+   ============================================================ */
+@media (max-width:960px){
+  .lab{grid-template-columns:1fr;gap:16px}
+  .panel{position:static;order:2}
+  .stage-card{order:1}
+  .brand-sub{display:none}
+  .prompt{font-size:23px}
+}
+@media (max-width:560px){
+  .topbar{padding:10px 14px;gap:12px}
+  .brand{gap:10px}
+  .brand-name{font-size:19px}
+  .mark{width:38px;height:38px;font-size:22px}
+  .top-mid{gap:12px}
+  .qcount{font-size:15px}
+  .lab{padding:14px 12px 32px}
+  .stage-head{padding:10px 12px;gap:8px;flex-wrap:wrap}
+  .tag{font-size:13px}
+  .tool{padding:6px 10px;font-size:13px}
+  .legend{padding:10px 12px;gap:6px 14px;font-size:12px}
+  .panel{padding:16px 15px 16px}
+  .prompt{font-size:21px}
+  .steps li{font-size:14px}
+  .result .big{font-size:34px}
+  .btn{font-size:14px;padding:9px 13px}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+        <path d="M3.2 20.2h17.6M3.2 20.2 15.6 5"/>
+        <path d="M11.2 20.2a8 8 0 0 0-3.7-6.8" stroke-width="1.3" opacity=".72"/>
+      </svg>
+    </span>
+    <span>
+      <span class="brand-name">Solid Lab</span>
+      <span class="brand-sub">HKDSE Form 5 · 3D Trigonometry</span>
+    </span>
+  </div>
+  <div class="top-mid">
+    <span class="qcount" id="qCount">1 / 4</span>
+  </div>
+</header>
+
+<main class="lab">
+  <section class="stage-card">
+    <div class="stage-head">
+      <span class="tag">Angle between two planes</span>
+      <div class="stage-tools">
+        <button class="tool" id="hintBtn" type="button">Hint</button>
+        <button class="tool" id="resetBtn" type="button">Reset</button>
+        <button class="tool next" id="nextTop" type="button">Next →</button>
+      </div>
+    </div>
+    <div class="stage">
+      <svg id="scene" viewBox="0 0 820 620" role="img" aria-label="3D solid with two highlighted planes. Choose a point on the intersection line, then drag to draw two perpendiculars.">
+        <g id="g-scene"></g>
+        <g id="g-preview"></g>
+        <g id="g-hover"></g>
+      </svg>
+    </div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <aside class="panel">
+    <div class="eyebrow">HKDSE F5 · 3D Trigonometry</div>
+    <h1 class="prompt" id="prompt"></h1>
+    <div class="given" id="given"></div>
+
+    <div class="define">
+      The angle between two planes is the angle between two lines — one in each plane —
+      both <b>perpendicular to the line of intersection at the same point</b>.
+      <span class="zh">（兩平面的夾角）</span>
+    </div>
+
+    <ol class="steps" id="steps">
+      <li id="step0"><span class="n">1</span><span>Place <b>P</b> on the intersection line.</span></li>
+      <li id="step1"><span class="n">2</span><span>Draw a perpendicular in the first plane.</span></li>
+      <li id="step2"><span class="n">3</span><span>Draw the matching perpendicular in the second plane.</span></li>
+    </ol>
+
+    <div class="fb" id="fb" aria-live="polite"></div>
+
+    <div class="result" id="result" hidden></div>
+
+    <div class="panel-actions">
+      <button class="btn btn-primary" id="nextBtn" type="button">Next question →</button>
+      <button class="btn btn-ghost" id="resetBtn2" type="button">Reset</button>
+    </div>
+  </aside>
+</main>
+
+<footer>
+  <span>Solid Lab · HKDSE Form 5 3D Trigonometry</span>
+  <span>Mark the angle between two planes</span>
+</footer>
+
+<script>
+/* ============================================================
+   utils
+   ============================================================ */
+const $  = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const rad = d => d * Math.PI / 180;
+const deg = r => r * 180 / Math.PI;
+
+const V = {
+  add: (a, b) => [a[0]+b[0], a[1]+b[1], a[2]+b[2]],
+  sub: (a, b) => [a[0]-b[0], a[1]-b[1], a[2]-b[2]],
+  mul: (a, s) => [a[0]*s, a[1]*s, a[2]*s],
+  dot: (a, b) => a[0]*b[0] + a[1]*b[1] + a[2]*b[2],
+  cross: (a, b) => [
+    a[1]*b[2] - a[2]*b[1],
+    a[2]*b[0] - a[0]*b[2],
+    a[0]*b[1] - a[1]*b[0]
+  ],
+  len: a => Math.hypot(a[0], a[1], a[2]),
+  norm: a => { const l = V.len(a) || 1; return [a[0]/l, a[1]/l, a[2]/l]; },
+  lerp: (a, b, t) => [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t]
+};
+
+function centroid(pts){
+  const s = pts.reduce((acc, p) => V.add(acc, p), [0,0,0]);
+  return V.mul(s, 1 / pts.length);
+}
+
+/* ============================================================
+   questions
+   ============================================================ */
+const QUESTIONS = [
+  {
+    id: 'wedge',
+    solid: 'Wedge',
+    promptName: 'wedge',
+    given: 'AB = 6, AD = 4, DE = 3',
+    working: 'tan θ = DE / AD = 3 / 4',
+    vertices: {
+      A: [0,0,0], B: [6,0,0], C: [6,4,0], D: [0,4,0],
+      E: [0,4,3], F: [6,4,3]
+    },
+    faces: [
+      ['A','B','C','D'],
+      ['A','B','F','E'],
+      ['D','C','F','E'],
+      ['A','D','E'],
+      ['B','C','F']
+    ],
+    planes: [
+      { name: 'ABFE', keys: ['A','B','F','E'], color: 'const' },
+      { name: 'ABCD', keys: ['A','B','C','D'], color: 'x' }
+    ],
+    inter: ['A','B'],
+    yaw: 38, pitch: 22,
+    labelOffsets: { A:[-16,13], B:[16,13], C:[17,-2], D:[-17,-2], E:[-14,-14], F:[14,-14] }
+  },
+  {
+    id: 'pyramid-base',
+    solid: 'Pyramid',
+    given: 'square base 6 × 6, height VO = 4',
+    working: 'tan θ = VO / OM = 4 / 3',
+    vertices: {
+      A: [-3,-3,0], B: [3,-3,0], C: [3,3,0], D: [-3,3,0], V: [0,0,4]
+    },
+    faces: [
+      ['A','B','C','D'],
+      ['V','A','B'],
+      ['V','B','C'],
+      ['V','C','D'],
+      ['V','D','A']
+    ],
+    planes: [
+      { name: 'VAB', keys: ['V','A','B'], color: 'const' },
+      { name: 'ABCD', keys: ['A','B','C','D'], color: 'x' }
+    ],
+    inter: ['A','B'],
+    yaw: 35, pitch: 24,
+    labelOffsets: { A:[-17,12], B:[17,12], C:[17,-7], D:[-17,-7], V:[0,-19] }
+  },
+  {
+    id: 'cuboid-diagonal',
+    solid: 'Cuboid',
+    given: 'AB = 6, AD = 4, AE = 3',
+    working: '',
+    vertices: {
+      A: [0,0,0], B: [6,0,0], C: [6,4,0], D: [0,4,0],
+      E: [0,0,3], F: [6,0,3], G: [6,4,3], H: [0,4,3]
+    },
+    faces: [
+      ['A','B','C','D'],
+      ['E','F','G','H'],
+      ['A','B','F','E'],
+      ['B','C','G','F'],
+      ['C','D','H','G'],
+      ['D','A','E','H']
+    ],
+    planes: [
+      { name: 'BDE', keys: ['B','D','E'], color: 'const' },
+      { name: 'ABCD', keys: ['A','B','C','D'], color: 'x' }
+    ],
+    inter: ['B','D'],
+    yaw: 35, pitch: 24,
+    labelOffsets: { A:[-17,12], B:[17,14], C:[18,-4], D:[-18,-4], E:[-17,-14], F:[17,-16], G:[19,-18], H:[-19,-18] }
+  },
+  {
+    id: 'pyramid-faces',
+    solid: 'Pyramid',
+    given: 'square base 6 × 6, height VO = 4',
+    working: '',
+    vertices: {
+      A: [-3,-3,0], B: [3,-3,0], C: [3,3,0], D: [-3,3,0], V: [0,0,4]
+    },
+    faces: [
+      ['A','B','C','D'],
+      ['V','A','B'],
+      ['V','B','C'],
+      ['V','C','D'],
+      ['V','D','A']
+    ],
+    planes: [
+      { name: 'VAB', keys: ['V','A','B'], color: 'const' },
+      { name: 'VBC', keys: ['V','B','C'], color: 'x' }
+    ],
+    inter: ['V','B'],
+    yaw: 35, pitch: 24,
+    labelOffsets: { A:[-17,12], B:[17,12], C:[17,-7], D:[-17,-7], V:[0,-19] }
+  }
+];
+
+/* ============================================================
+   camera
+   ============================================================ */
+function makeCam(target, yawDeg, pitchDeg){
+  const yaw = rad(yawDeg), pitch = rad(pitchDeg);
+  const dir = [
+    Math.sin(yaw) * Math.cos(pitch),
+    -Math.cos(yaw) * Math.cos(pitch),
+    Math.sin(pitch)
+  ];
+  const eye = V.add(target, V.mul(dir, 60));
+  const forward = V.norm(V.sub(target, eye));
+  const right = V.norm(V.cross(forward, [0,0,1]));
+  const up = V.cross(right, forward);
+  return { eye, forward, right, up };
+}
+
+function projectRaw(p, cam){
+  const d = V.sub(p, cam.eye);
+  return { x: V.dot(d, cam.right), y: V.dot(d, cam.up), depth: V.dot(d, cam.forward) };
+}
+
+function screenDir(d, cam){
+  return { x: V.dot(d, cam.right), y: -V.dot(d, cam.up) };
+}
+
+function makeView(q){
+  const W = 820, H = 620, pad = 66;
+  const cam = makeCam(q.center, q.yaw, q.pitch);
+  const raw = Object.values(q.vertices).map(p => projectRaw(p, cam));
+  const minX = Math.min(...raw.map(r => r.x)), maxX = Math.max(...raw.map(r => r.x));
+  const minY = Math.min(...raw.map(r => r.y)), maxY = Math.max(...raw.map(r => r.y));
+  const scale = Math.min((W - 2*pad) / (maxX - minX), (H - 2*pad) / (maxY - minY));
+  const cx = W/2 - (minX + maxX)/2 * scale;
+  const cy = H/2 + (minY + maxY)/2 * scale;
+  return {
+    W, H, cam, scale, cx, cy,
+    toScreen(p){
+      const r = projectRaw(p, cam);
+      return { x: cx + r.x * scale, y: cy - r.y * scale };
+    }
+  };
+}
+
+/* ============================================================
+   geometry
+   ============================================================ */
+function prepare(q){
+  const keys = Object.keys(q.vertices);
+  const pts = keys.map(k => q.vertices[k]);
+  q.center = centroid(pts);
+  q.interDir = V.norm(V.sub(q.vertices[q.inter[1]], q.vertices[q.inter[0]]));
+  q.interName = q.inter.join('');
+
+  let size = 0;
+  for (let i = 0; i < pts.length; i++)
+    for (let j = i+1; j < pts.length; j++)
+      size = Math.max(size, V.len(V.sub(pts[i], pts[j])));
+  q.size = size;
+
+  q.planes.forEach((pl, i) => {
+    pl.pts3 = pl.keys.map(k => q.vertices[k]);
+    pl.n = V.norm(V.cross(V.sub(pl.pts3[1], pl.pts3[0]), V.sub(pl.pts3[2], pl.pts3[0])));
+    pl.u = V.norm(V.sub(pl.pts3[1], pl.pts3[0]));
+    pl.v = V.norm(V.cross(pl.n, pl.u));
+    pl.c = centroid(pl.pts3);
+    pl.idx = i;
+  });
+
+  q.answer = planeAngle(q);
+  return q;
+}
+
+function planeAngle(q){
+  const c = Math.abs(V.dot(q.planes[0].n, q.planes[1].n));
+  return deg(Math.acos(clamp(c, 0, 1)));
+}
+
+function buildSolid(q, view){
+  const faces = q.faces.map(keys => {
+    const pts = keys.map(k => q.vertices[k]);
+    let n = V.norm(V.cross(V.sub(pts[1], pts[0]), V.sub(pts[2], pts[0])));
+    const c = centroid(pts);
+    if (V.dot(n, V.sub(c, q.center)) < 0) n = V.mul(n, -1);
+    return { keys, pts, n, c, front: V.dot(n, V.sub(view.cam.eye, c)) > 0 };
+  });
+
+  const map = new Map();
+  faces.forEach((f, fi) => {
+    for (let i = 0; i < f.keys.length; i++){
+      const a = f.keys[i], b = f.keys[(i+1) % f.keys.length];
+      const key = [a,b].sort().join('-');
+      if (!map.has(key)) map.set(key, { a, b, faces: [] });
+      map.get(key).faces.push(fi);
+    }
+  });
+
+  const edges = [...map.values()].map(e => ({
+    ...e,
+    visible: e.faces.some(fi => faces[fi].front)
+  }));
+  return { faces, edges };
+}
+
+function pointInFace3D(Q, f){
+  const s0 = V.dot(V.cross(V.sub(f.pts[1], f.pts[0]), V.sub(f.c, f.pts[0])), f.n);
+  const sign = s0 >= 0 ? 1 : -1;
+  for (let i = 0; i < f.pts.length; i++){
+    const a = f.pts[i], b = f.pts[(i+1) % f.pts.length];
+    const val = V.dot(V.cross(V.sub(b, a), V.sub(Q, a)), f.n) * sign;
+    if (val < -1e-6) return false;
+  }
+  return true;
+}
+
+function pointInFace(Q, f){
+  /* The 3D half-space test accepts points on the boundary (important when a
+     construction line ends exactly at a vertex). The centroid fixes the sign
+     of the winding, so this works for every convex face in these solids. */
+  return pointInFace3D(Q, f);
+}
+
+function clipSolid(P, d){
+  let tMin = -Infinity, tMax = Infinity;
+  for (const f of S.solid.faces){
+    const den = V.dot(d, f.n);
+    if (Math.abs(den) < 1e-7) continue;
+    const t = V.dot(V.sub(f.pts[0], P), f.n) / den;
+
+    /* If the line starts on the boundary, t = 0 is a real exit for the ray
+       pointing out of the solid. Without this, a line drawn along an edge
+       would be extended backwards outside the figure. */
+    if (Math.abs(t) < 1e-6){
+      if (pointInFace(P, f)){
+        if (den > 0) tMax = Math.min(tMax, 0);
+        else tMin = Math.max(tMin, 0);
+      }
+      continue;
+    }
+
+    const Q = V.add(P, V.mul(d, t));
+    if (pointInFace(Q, f)){
+      if (t > 0) tMax = Math.min(tMax, t);
+      else tMin = Math.max(tMin, t);
+    }
+  }
+  const fallback = S.q.size * 1.1;
+  if (!isFinite(tMin)) tMin = -fallback;
+  if (!isFinite(tMax)) tMax = fallback;
+  return [tMin, tMax];
+}
+
+/* Keep a construction line inside the highlighted plane polygon. This matters
+   for internal planes (BDE, VAB, VBC) where the line would otherwise run on
+   through the solid beyond the shaded triangle. */
+function clipToPlane(P, d, pl){
+  const p0 = { x: V.dot(V.sub(P, pl.pts3[0]), pl.u), y: V.dot(V.sub(P, pl.pts3[0]), pl.v) };
+  const dv = { x: V.dot(d, pl.u), y: V.dot(d, pl.v) };
+  const ts = [];
+  const pts = pl.pts3;
+  for (let i = 0; i < pts.length; i++){
+    const a = { x: V.dot(V.sub(pts[i], pl.pts3[0]), pl.u), y: V.dot(V.sub(pts[i], pl.pts3[0]), pl.v) };
+    const b = { x: V.dot(V.sub(pts[(i+1) % pts.length], pl.pts3[0]), pl.u), y: V.dot(V.sub(pts[(i+1) % pts.length], pl.pts3[0]), pl.v) };
+    const e = { x: b.x - a.x, y: b.y - a.y };
+    const den = dv.x * e.y - dv.y * e.x;
+    if (Math.abs(den) < 1e-9) continue;
+    const w = { x: a.x - p0.x, y: a.y - p0.y };
+    const t = (w.x * e.y - w.y * e.x) / den;
+    const s = (w.x * dv.y - w.y * dv.x) / den;
+    if (s >= -1e-6 && s <= 1 + 1e-6) ts.push(t);
+  }
+  if (ts.length < 2) return null;
+  return [Math.min(...ts), Math.max(...ts)];
+}
+
+function clipLine(P, d, pl){
+  const solid = clipSolid(P, d);
+  if (!pl) return solid;
+  const plane = clipToPlane(P, d, pl);
+  if (!plane) return solid;
+  const t0 = Math.max(solid[0], plane[0]);
+  const t1 = Math.min(solid[1], plane[1]);
+  return (t1 - t0 > 1e-6) ? [t0, t1] : solid;
+}
+
+function acuteAngle(a, b){
+  return deg(Math.acos(clamp(Math.abs(V.dot(a, b)), 0, 1)));
+}
+
+/* ============================================================
+   state
+   ============================================================ */
+const S = {
+  qi: 0, q: null, view: null, solid: null,
+  step: 0, P: null, lines: [], drag: null,
+  hover: null, hoverNearP: false, pointer: { x: 0, y: 0 },
+  hint: null
+};
+let hintTimer = null;
+
+/* ============================================================
+   svg helpers
+   ============================================================ */
+const svg = $('#scene');
+
+function line(a, b, cls, extra = ''){
+  return `<line x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${b.x.toFixed(1)}" y2="${b.y.toFixed(1)}" class="${cls}" ${extra}/>`;
+}
+
+function labelOffset(q, key){
+  if (q.labelOffsets && q.labelOffsets[key]) return q.labelOffsets[key];
+  const sp = S.view.toScreen(q.vertices[key]);
+  const cp = S.view.toScreen(q.center);
+  let dx = sp.x - cp.x, dy = sp.y - cp.y;
+  const l = Math.hypot(dx, dy) || 1;
+  return [dx / l * 17, dy / l * 17];
+}
+
+function raMarker(P, u, d){
+  const r = S.q.size * 0.032;
+  const a = V.add(P, V.mul(u, r));
+  const b = V.add(a, V.mul(d, r));
+  const c = V.add(P, V.mul(d, r));
+  const A = S.view.toScreen(a), B = S.view.toScreen(b), C = S.view.toScreen(c);
+  return `<path d="M${A.x.toFixed(1)} ${A.y.toFixed(1)} L${B.x.toFixed(1)} ${B.y.toFixed(1)} L${C.x.toFixed(1)} ${C.y.toFixed(1)}" class="ra"/>`;
+}
+
+function arcData(){
+  const d1 = S.lines[0].visDir || S.lines[0].dir;
+  const d2 = S.lines[1].visDir || S.lines[1].dir;
+  const raw = deg(Math.acos(clamp(V.dot(d1, d2), -1, 1)));
+  let b = d2, flipped = false;
+  if (V.dot(d1, b) < 0){ b = V.mul(b, -1); flipped = true; }
+  const theta = Math.acos(clamp(V.dot(d1, b), -1, 1));
+  const e1 = d1;
+  const e2 = V.norm(V.sub(b, V.mul(e1, V.dot(b, e1))));
+  const r = clamp(S.q.size * 0.17, 0.8, 1.6);
+  const pts = [];
+  for (let i = 0; i <= 28; i++){
+    const t = theta * i / 28;
+    const p = V.add(S.P, V.mul(V.add(V.mul(e1, Math.cos(t)), V.mul(e2, Math.sin(t))), r));
+    pts.push(S.view.toScreen(p));
+  }
+  const path = pts.map((p, i) => (i ? 'L' : 'M') + p.x.toFixed(1) + ' ' + p.y.toFixed(1)).join(' ');
+  const mt = theta / 2;
+  const mp = V.add(S.P, V.mul(V.add(V.mul(e1, Math.cos(mt)), V.mul(e2, Math.sin(mt))), r * 1.38));
+  return { path, label: S.view.toScreen(mp), theta: deg(theta), raw, r, extDir: flipped ? b : null };
+}
+
+/* ============================================================
+   scene
+   ============================================================ */
+function scene(){
+  const q = S.q, v = S.view, sol = S.solid;
+  const out = [];
+
+  /* hidden edges */
+  for (const e of sol.edges) if (!e.visible){
+    out.push(line(v.toScreen(q.vertices[e.a]), v.toScreen(q.vertices[e.b]), 'edge hid'));
+  }
+
+  /* planes */
+  for (const pl of q.planes){
+    const pts = pl.keys.map(k => v.toScreen(q.vertices[k]));
+    const color = pl.color === 'const' ? 'var(--const)' : 'var(--x)';
+    out.push(
+      `<polygon points="${pts.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ')}" ` +
+      `fill="${color}" fill-opacity=".09" stroke="${color}" stroke-opacity=".5" ` +
+      `stroke-width="1.1" stroke-dasharray="5 4" vector-effect="non-scaling-stroke"/>`
+    );
+  }
+
+  /* visible edges */
+  for (const e of sol.edges) if (e.visible){
+    out.push(line(v.toScreen(q.vertices[e.a]), v.toScreen(q.vertices[e.b]), 'edge'));
+  }
+
+  /* intersection */
+  const ia = v.toScreen(q.vertices[q.inter[0]]);
+  const ib = v.toScreen(q.vertices[q.inter[1]]);
+  out.push(line(ia, ib, 'inter-halo'), line(ia, ib, 'inter'));
+
+  /* committed lines */
+  for (const ln of S.lines){
+    const [t0, t1] = clipLine(S.P, ln.dir, ln.plane);
+    const a = v.toScreen(V.add(S.P, V.mul(ln.dir, t0)));
+    const b = v.toScreen(V.add(S.P, V.mul(ln.dir, t1)));
+    const color = ln.plane.color === 'const' ? 'var(--const)' : 'var(--x)';
+    out.push(line(a, b, 'user-halo'));
+    out.push(line(a, b, 'user', `stroke="${color}"`));
+  }
+
+  /* right-angle markers */
+  for (const ln of S.lines){
+    const d = ln.visDir || ln.dir;
+    if (Math.abs(V.dot(d, q.interDir)) < 0.02) out.push(raMarker(S.P, q.interDir, d));
+  }
+
+  /* hint ghost */
+  if (S.hint && S.P){
+    const [t0, t1] = clipLine(S.P, S.hint.dir, S.q.planes[S.step-1]);
+    const a = v.toScreen(V.add(S.P, V.mul(S.hint.dir, t0)));
+    const b = v.toScreen(V.add(S.P, V.mul(S.hint.dir, t1)));
+    out.push(line(a, b, 'preview', 'stroke="var(--mark)" opacity=".5"'));
+    const mid = { x:(a.x+b.x)/2, y:(a.y+b.y)/2 };
+    out.push(`<text x="${mid.x}" y="${mid.y - 9}" class="snap" text-anchor="middle" fill="var(--color-field)">⊥ ${q.interName}</text>`);
+  }
+
+  /* arc */
+  if (S.step === 3 && S.lines.length === 2){
+    const a = arcData();
+    if (a.extDir){
+      const ext = V.add(S.P, V.mul(a.extDir, a.r * 1.55));
+      const e0 = v.toScreen(S.P), e1 = v.toScreen(ext);
+      const color = S.lines[1].plane.color === 'const' ? 'var(--const)' : 'var(--x)';
+      out.push(line(e0, e1, 'preview', `stroke="${color}" opacity=".5"`));
+    }
+    out.push(`<path d="${a.path}" class="arc"/>`);
+    out.push(
+      `<text x="${a.label.x}" y="${a.label.y}" class="angtext" text-anchor="middle" dominant-baseline="middle">` +
+      `${Math.min(a.theta, 180 - a.theta).toFixed(1)}°</text>`
+    );
+  }
+
+  /* vertices */
+  for (const k of Object.keys(q.vertices)){
+    const sp = v.toScreen(q.vertices[k]);
+    const [dx, dy] = labelOffset(q, k);
+    out.push(`<circle cx="${sp.x.toFixed(1)}" cy="${sp.y.toFixed(1)}" r="3.5" class="vdot"/>`);
+    out.push(
+      `<text x="${(sp.x+dx).toFixed(1)}" y="${(sp.y+dy).toFixed(1)}" class="vlabel" ` +
+      `text-anchor="middle" dominant-baseline="middle">${k}</text>`
+    );
+  }
+
+  /* intersection label — keep it away from P */
+  {
+    let tp = 0.5;
+    if (S.P) tp = closestT(v.toScreen(S.P), ia, ib);
+    const lt = tp < 0.5 ? 0.76 : 0.24;
+    const mid = { x: ia.x + (ib.x - ia.x) * lt, y: ia.y + (ib.y - ia.y) * lt };
+    let nx = -(ib.y - ia.y), ny = ib.x - ia.x;
+    const L = Math.hypot(nx, ny) || 1; nx /= L; ny /= L;
+    const cp = v.toScreen(q.center);
+    if ((mid.x - cp.x) * nx + (mid.y - cp.y) * ny < 0){ nx = -nx; ny = -ny; }
+    out.push(
+      `<text x="${(mid.x+nx*18).toFixed(1)}" y="${(mid.y+ny*18).toFixed(1)}" class="plabel" ` +
+      `text-anchor="middle" dominant-baseline="middle">${q.interName}</text>`
+    );
+  }
+
+  /* P */
+  if (S.P){
+    const sp = v.toScreen(S.P);
+    const cp = v.toScreen(q.center);
+    let dx = sp.x - cp.x, dy = sp.y - cp.y;
+    const L = Math.hypot(dx, dy) || 1; dx /= L; dy /= L;
+    out.push(`<circle cx="${sp.x.toFixed(1)}" cy="${sp.y.toFixed(1)}" r="4.8" class="pdot"/>`);
+    /* If P sits on a vertex, the vertex letter already names it; don't stack a P on top. */
+    const onVertex = Object.keys(q.vertices).some(k => {
+      const vp = v.toScreen(q.vertices[k]);
+      return Math.hypot(sp.x - vp.x, sp.y - vp.y) < 5;
+    });
+    if (!onVertex){
+      out.push(
+        `<text x="${(sp.x+dx*17).toFixed(1)}" y="${(sp.y+dy*17).toFixed(1)}" class="plabel-p" ` +
+        `text-anchor="middle" dominant-baseline="middle">P</text>`
+      );
+    }
+  }
+
+  return out.join('');
+}
+
+/* ============================================================
+   snapping
+   ============================================================ */
+function closestT(p, a, b){
+  const dx = b.x - a.x, dy = b.y - a.y;
+  const l2 = dx*dx + dy*dy || 1;
+  return clamp(((p.x - a.x) * dx + (p.y - a.y) * dy) / l2, 0, 1);
+}
+
+function snapStart(loc){
+  const q = S.q, v = S.view;
+  const A = q.vertices[q.inter[0]], B = q.vertices[q.inter[1]];
+  const a = v.toScreen(A), b = v.toScreen(B);
+  const t = closestT(loc, a, b);
+  const proj = { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+  const dist = Math.hypot(loc.x - proj.x, loc.y - proj.y);
+  if (dist > 20) return null;
+
+  let tt = t, label = 'on ' + q.interName;
+  if (Math.hypot(loc.x - a.x, loc.y - a.y) < 15){ tt = 0; label = q.inter[0]; }
+  else if (Math.hypot(loc.x - b.x, loc.y - b.y) < 15){ tt = 1; label = q.inter[1]; }
+
+  return { p: V.lerp(A, B, tt), label, t: tt };
+}
+
+function dirInPlane(dx, dy, pl, cam){
+  const pu = screenDir(pl.u, cam);
+  const pv = screenDir(pl.v, cam);
+  const det = pu.x * pv.y - pu.y * pv.x;
+  if (Math.abs(det) < 1e-4) return null;
+  const a = (dx * pv.y - dy * pv.x) / det;
+  const b = (pu.x * dy - pu.y * dx) / det;
+  const d = V.add(V.mul(pl.u, a), V.mul(pl.v, b));
+  if (V.len(d) < 1e-6) return null;
+  return V.norm(d);
+}
+
+function candidates(P, pl){
+  const q = S.q, sol = S.solid;
+  const list = [];
+
+  const add = (dir, kind, label, pri) => {
+    if (Math.abs(V.dot(dir, pl.n)) > 0.03) return;
+    const s = screenDir(dir, S.view.cam);
+    if (Math.hypot(s.x, s.y) < 1e-4) return;
+    const ang = Math.atan2(s.y, s.x);
+    for (const e of list){
+      let diff = Math.atan2(Math.sin(ang - e.ang), Math.cos(ang - e.ang));
+      if (Math.abs(diff) < rad(1.2)){
+        if (pri < e.pri){ e.kind = kind; e.label = label; e.pri = pri; e.dir = dir; }
+        return;
+      }
+    }
+    list.push({ ang, dir, kind, label, pri });
+  };
+
+  /* exact perpendicular to the intersection */
+  const perp = V.norm(V.cross(pl.n, q.interDir));
+  add(perp, 'perp', '⊥ ' + q.interName, 0);
+  add(V.mul(perp, -1), 'perp', '⊥ ' + q.interName, 0);
+
+  /* existing edge directions */
+  for (const e of sol.edges){
+    const d = V.norm(V.sub(q.vertices[e.b], q.vertices[e.a]));
+    add(d, 'edge', '∥ ' + e.a + e.b, 3);
+    add(V.mul(d, -1), 'edge', '∥ ' + e.a + e.b, 3);
+  }
+
+  /* face diagonals */
+  for (const f of sol.faces){
+    for (let i = 0; i < f.keys.length; i++){
+      for (let j = i + 2; j < f.keys.length; j++){
+        if (i === 0 && j === f.keys.length - 1) continue;
+        const d = V.norm(V.sub(q.vertices[f.keys[j]], q.vertices[f.keys[i]]));
+        add(d, 'diag', '∥ ' + f.keys[i] + f.keys[j], 4);
+        add(V.mul(d, -1), 'diag', '∥ ' + f.keys[i] + f.keys[j], 4);
+      }
+    }
+  }
+
+  /* directions from P to vertices */
+  for (const k of Object.keys(q.vertices)){
+    const p = q.vertices[k];
+    if (V.len(V.sub(p, P)) < 1e-6) continue;
+    const d = V.norm(V.sub(p, P));
+    add(d, 'vertex', '→ ' + k, 1);
+  }
+
+  return list;
+}
+
+function dragDir(loc){
+  const dx = loc.x - S.drag.start.x;
+  const dy = loc.y - S.drag.start.y;
+  if (Math.hypot(dx, dy) < 12) return null;
+
+  const pl = S.q.planes[S.step - 1];
+  const free = dirInPlane(dx, dy, pl, S.view.cam);
+  if (!free) return null;
+
+  const dragAng = Math.atan2(dy, dx);
+  let best = null;
+  for (const c of candidates(S.drag.P, pl)){
+    const s = screenDir(c.dir, S.view.cam);
+    let diff = Math.atan2(s.y, s.x) - dragAng;
+    diff = Math.atan2(Math.sin(diff), Math.cos(diff));
+    const ad = Math.abs(diff);
+    if (ad < rad(8) && (!best || ad < best.ad)) best = { ...c, ad };
+  }
+
+  return best ? { dir: best.dir, snap: best } : { dir: free, snap: null };
+}
+
+/* ============================================================
+   interaction
+   ============================================================ */
+function locOf(e){
+  const pt = svg.createSVGPoint();
+  pt.x = e.clientX; pt.y = e.clientY;
+  return pt.matrixTransform(svg.getScreenCTM().inverse());
+}
+
+function setFb(html, kind){
+  const fb = $('#fb');
+  fb.className = 'fb' + (kind ? ' ' + kind : '');
+  fb.innerHTML = html;
+}
+
+function paintSteps(){
+  $$('#steps li').forEach((li, i) => {
+    li.classList.toggle('done', i < S.step);
+    li.classList.toggle('on', i === S.step);
+    li.setAttribute('aria-current', i === S.step ? 'step' : 'false');
+  });
+}
+
+function paintHover(){
+  const g = $('#g-hover');
+  if (!g) return;
+  if (S.step === 0 && S.hover){
+    const p = S.view.toScreen(S.hover.p);
+    g.innerHTML =
+      `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="10" class="hover"/>` +
+      `<text x="${(p.x+14).toFixed(1)}" y="${(p.y-12).toFixed(1)}" class="snap">${S.hover.label}</text>`;
+  } else if ((S.step === 1 || S.step === 2) && S.hoverNearP && S.P){
+    const p = S.view.toScreen(S.P);
+    g.innerHTML = `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="13" class="hover"/>`;
+  } else {
+    g.innerHTML = '';
+  }
+}
+
+function paintPreview(){
+  const g = $('#g-preview');
+  if (!g) return;
+  if (!S.drag || !S.drag.dir){ g.innerHTML = ''; return; }
+
+  const { P, dir, snap, loc } = S.drag;
+  const [t0, t1] = clipLine(P, dir, S.q.planes[S.step-1]);
+  const a = S.view.toScreen(V.add(P, V.mul(dir, t0)));
+  const b = S.view.toScreen(V.add(P, V.mul(dir, t1)));
+  const perp = snap && snap.kind === 'perp';
+  let html = line(a, b, 'preview', `stroke="${perp ? 'var(--mark)' : 'var(--ink-3)'}"`);
+  if (perp) html += raMarker(P, S.q.interDir, dir);
+
+  if (snap){
+    const lx = clamp(loc.x + 14, 12, 690);
+    const ly = clamp(loc.y - 14, 20, 600);
+    html += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" class="snap" fill="${perp ? 'var(--color-field)' : 'var(--ink-2)'}">${snap.label}</text>`;
+  }
+  g.innerHTML = html;
+}
+
+function render(){
+  $('#g-scene').innerHTML = scene();
+  paintPreview();
+  paintHover();
+  paintSteps();
+}
+
+/* ============================================================
+   flow
+   ============================================================ */
+function load(i){
+  clearTimeout(hintTimer);
+  S.qi = (i + QUESTIONS.length) % QUESTIONS.length;
+  S.q = prepare(QUESTIONS[S.qi]);
+  S.view = makeView(S.q);
+  S.solid = buildSolid(S.q, S.view);
+  S.step = 0;
+  S.P = null;
+  S.lines = [];
+  S.drag = null;
+  S.hover = null;
+  S.hoverNearP = false;
+  S.hint = null;
+
+  const q = S.q, p0 = q.planes[0], p1 = q.planes[1];
+  $('#qCount').textContent = `${S.qi + 1} / ${QUESTIONS.length}`;
+  $('#prompt').innerHTML =
+    `Mark the angle between <span class="pc ${p0.color}">plane ${p0.name}</span> ` +
+    `and <span class="pc ${p1.color}">plane ${p1.name}</span>.`;
+  $('#given').textContent = 'Given: ' + q.given;
+  $('#step0').innerHTML = `<span class="n">1</span><span>Place <b>P</b> on the intersection line <b>${q.interName}</b>.</span>`;
+  $('#step1').innerHTML = `<span class="n">2</span><span>In plane <b>${p0.name}</b>, draw a line through P perpendicular to <b>${q.interName}</b>.</span>`;
+  $('#step2').innerHTML = `<span class="n">3</span><span>In plane <b>${p1.name}</b>, draw the matching perpendicular.</span>`;
+
+  $('#legend').innerHTML =
+    `<span class="lg"><i class="sw" style="background:var(--const)"></i>plane ${p0.name}</span>` +
+    `<span class="lg"><i class="sw" style="background:var(--x)"></i>plane ${p1.name}</span>` +
+    `<span class="lg"><i class="sw" style="background:var(--mark)"></i>intersection ${q.interName}</span>` +
+    `<span class="lg"><i class="sw" style="background:linear-gradient(90deg,var(--const) 0 50%,var(--x) 50% 100%)"></i>your perpendiculars</span>`;
+
+  $('#result').hidden = true;
+  $('#result').innerHTML = '';
+  setFb(`Click anywhere on the thick line <b>${q.interName}</b> to place P.`, '');
+  fitText();
+  render();
+}
+
+function reset(){
+  clearTimeout(hintTimer);
+  S.step = 0;
+  S.P = null;
+  S.lines = [];
+  S.drag = null;
+  S.hover = null;
+  S.hoverNearP = false;
+  S.hint = null;
+  $('#result').hidden = true;
+  $('#result').innerHTML = '';
+  setFb(`Click anywhere on the thick line <b>${S.q.interName}</b> to place P.`, '');
+  render();
+}
+
+function finish(){
+  const q = S.q;
+  const a = arcData();
+  const acute = Math.min(a.theta, 180 - a.theta);
+  let extra = '';
+  if (a.raw > 90.5){
+    extra = `<div class="work">The two perpendiculars form ${a.raw.toFixed(1)}°; the angle between the planes is the acute angle, ${acute.toFixed(1)}°.</div>`;
+  } else if (q.working){
+    extra = `<div class="work">${q.working}</div>`;
+  }
+
+  $('#result').hidden = false;
+  $('#result').innerHTML =
+    `<div class="big">${acute.toFixed(1)}°</div>` +
+    `<div class="sub">angle between plane ${q.planes[0].name} and plane ${q.planes[1].name}</div>` +
+    extra +
+    `<button class="linkbtn" id="tryAgain" type="button">Try another point on ${q.interName} →</button>`;
+  $('#tryAgain').addEventListener('click', reset);
+
+  setFb(
+    `Angle marked. Both lines are perpendicular to <b>${q.interName}</b>, ` +
+    `so the angle between them is the angle between the planes.`,
+    'ok'
+  );
+}
+
+function commitLine(){
+  const pl = S.q.planes[S.step - 1];
+  const dir = S.drag.dir;
+  const ang = acuteAngle(dir, S.q.interDir);
+
+  if (ang < 89.2 || ang > 90.8){
+    S.drag = null;
+    const msg = ang < 12
+      ? `That line runs along <b>${S.q.interName}</b>. You need a line at right angles to it.`
+      : `That line is in plane <b>${pl.name}</b>, but it makes <b>${ang.toFixed(0)}°</b> with ${S.q.interName}. It must be <b>90°</b>.`;
+    setFb(msg, 'no');
+    render();
+    return;
+  }
+
+  const [ct0, ct1] = clipLine(S.P, dir, pl);
+  const pos = Math.max(0, ct1), neg = Math.max(0, -ct0);
+  const visDir = (neg > pos * 1.2) ? V.mul(dir, -1) : dir;
+  S.lines.push({ dir, visDir, plane: pl });
+  S.drag = null;
+
+  if (S.step === 1){
+    S.step = 2;
+    setFb(
+      `Correct — that line is perpendicular to <b>${S.q.interName}</b>. ` +
+      `Now draw the matching line in plane <b>${S.q.planes[1].name}</b>.`,
+      'ok'
+    );
+  } else {
+    S.step = 3;
+    finish();
+  }
+  render();
+}
+
+/* ============================================================
+   pointer events
+   ============================================================ */
+svg.addEventListener('pointerdown', e => {
+  if (S.step === 3) return;
+  const loc = locOf(e);
+
+  if (S.step === 0){
+    const hit = snapStart(loc);
+    if (!hit){
+      setFb(`Start on the line <b>${S.q.interName}</b>.`, 'no');
+      return;
+    }
+    S.P = hit.p;
+    S.step = 1;
+    setFb(
+      `P is set. Drag from P into plane <b>${S.q.planes[0].name}</b>, ` +
+      `keeping the line at 90° to <b>${S.q.interName}</b>.`,
+      ''
+    );
+    render();
+    return;
+  }
+
+  const pp = S.view.toScreen(S.P);
+  if (Math.hypot(loc.x - pp.x, loc.y - pp.y) > 26){
+    setFb(`Start from <b>P</b> — both lines must pass through the same point on ${S.q.interName}.`, 'no');
+    return;
+  }
+
+  S.drag = { P: S.P, start: pp, loc, dir: null, snap: null };
+  try { svg.setPointerCapture(e.pointerId); } catch (err) {}
+  e.preventDefault();
+});
+
+svg.addEventListener('pointermove', e => {
+  const loc = locOf(e);
+  S.pointer = loc;
+
+  if (S.drag){
+    const res = dragDir(loc);
+    S.drag.dir = res ? res.dir : null;
+    S.drag.snap = res ? res.snap : null;
+    S.drag.loc = loc;
+    paintPreview();
+    return;
+  }
+
+  if (S.step === 0){
+    S.hover = snapStart(loc);
+  } else if (S.step === 1 || S.step === 2){
+    const pp = S.view.toScreen(S.P);
+    S.hoverNearP = Math.hypot(loc.x - pp.x, loc.y - pp.y) <= 26;
+  }
+  paintHover();
+});
+
+function endDrag(){
+  if (!S.drag) return;
+  if (!S.drag.dir){
+    S.drag = null;
+    paintPreview();
+    return;
+  }
+  commitLine();
+}
+
+svg.addEventListener('pointerup', endDrag);
+svg.addEventListener('pointercancel', () => { S.drag = null; paintPreview(); });
+
+/* ============================================================
+   buttons
+   ============================================================ */
+$('#nextBtn').addEventListener('click', () => load(S.qi + 1));
+$('#nextTop').addEventListener('click', () => load(S.qi + 1));
+$('#resetBtn').addEventListener('click', reset);
+$('#resetBtn2').addEventListener('click', reset);
+
+$('#hintBtn').addEventListener('click', () => {
+  if (S.step === 0){
+    setFb(`Look for the thick line <b>${S.q.interName}</b>. Click anywhere on it to place P.`, '');
+    return;
+  }
+  if (S.step === 3 || !S.P) return;
+
+  const pl = S.q.planes[S.step - 1];
+  const perp = V.norm(V.cross(pl.n, S.q.interDir));
+  S.hint = { dir: perp };
+  setFb(`Hint: the dashed line is perpendicular to <b>${S.q.interName}</b>. Drag along it.`, '');
+  render();
+
+  clearTimeout(hintTimer);
+  hintTimer = setTimeout(() => {
+    S.hint = null;
+    render();
+  }, 2800);
+});
+
+/* ============================================================
+   text sizing (keeps labels readable when the SVG scales)
+   ============================================================ */
+function fitText(){
+  const w = svg.clientWidth || 820;
+  const base = w < 540 ? 13 : 15;
+  svg.style.setProperty('--fs', (base * 820 / w).toFixed(2) + 'px');
+}
+window.addEventListener('resize', fitText);
+
+/* ============================================================
+   boot
+   ============================================================ */
+fitText();
+load(0);
+
+/* test hook */
+window.TRIG = {
+  S, QUESTIONS, V, load, reset, render,
+  screen: p => S.view.toScreen(p),
+  clipLine, candidates, dirInPlane, snapStart, dragDir, acuteAngle
+};
+</script>
+</body>
+</html>
